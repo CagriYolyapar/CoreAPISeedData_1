@@ -58,7 +58,7 @@ namespace CoreAPISeedData_1.Controllers
         [HttpPost]
 
         //Postman tarafında JSON veri yollayabilmek icin Post tarafında Raw'u secmeyi unutmayın...
-        public async Task<IActionResult> CreateCategory(CategoryRequestModel model)
+        public async Task<IActionResult> CreateCategory(CreateCategoryRequestModel model)
         {
             Category c = new()
             {
@@ -75,7 +75,25 @@ namespace CoreAPISeedData_1.Controllers
 
         //Update
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryRequestModel model)
+        {
+            Category originalCategory = await _db.Categories.FindAsync(model.ID);
+            originalCategory.CategoryName = model.CategoryName;
+            originalCategory.Description = model.Description;
+            await _db.SaveChangesAsync();
+            return Ok(new CategoryResponseModel { ID = model.ID,CategoryName = model.CategoryName,Description = model.Description});
+        }
+
 
         //Delete
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            _db.Categories.Remove(await _db.Categories.FindAsync(id));
+            await _db.SaveChangesAsync();
+
+            return Ok("Silme işlemi basarılı bir şekilde gercekleşti");
+        }
     }
 }
